@@ -272,7 +272,7 @@
 
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
-        let lastUserId = null; // ล็อกไอดีไว้กันโหลดรูปซ้ำ
+        let currentUserId = null; // ตัวแปรเก็บ UserId ปัจจุบัน
 
         function formatCompact(num) {
             const n = Number(num);
@@ -282,6 +282,24 @@
             if (abs >= 1e6) return (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
             if (abs >= 1e3) return (n / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
             return n.toString();
+        }
+
+        // ฟังก์ชันแยกสำหรับโหลดรูป - จะทำงานแค่นั้นเมื่อเปลี่ยนไอดี
+        async function fetchAvatarOnce(userId) {
+            if (!userId || userId === currentUserId) return;
+            currentUserId = userId;
+
+            try {
+                const res = await fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${userId}&size=420x420&format=Png&isCircular=false`);
+                const rbxData = await res.json();
+                
+                if (rbxData && rbxData.data && rbxData.data.length > 0 && rbxData.data[0].imageUrl) {
+                    document.getElementById('player-avatar').src = rbxData.data[0].imageUrl;
+                }
+            } catch (err) {
+                console.error("โหลดรูปไม่สำเร็จ:", err);
+                currentUserId = null; // ถ้าพลาดจะให้ลองดึงใหม่รอบหน้า
+            }
         }
 
         async function fetchDashboardData() {
@@ -296,13 +314,9 @@
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    // โหลดรูปเฉพาะตอนที่ UserId มีการเปลี่ยนเปลี่ยนเท่านั้น (กันสแปมสคริปต์ซ้ำ)
-                    if (data.userId && data.userId > 0 && data.userId !== lastUserId) {
-                        lastUserId = data.userId;
-                        const avatarImg = document.getElementById('player-avatar');
-                        const rawRbxUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
-                        
-                        avatarImg.src = `https://wsrv.nl/?url=${encodeURIComponent(rawRbxUrl)}`;
+                    // ส่ง UserId ไปเช็ก ถ้าเป็นไอดีเดิมมันจะไม่ยิง Request รูปซ้ำให้เปลือง
+                    if (data.userId && data.userId > 0) {
+                        fetchAvatarOnce(data.userId);
                     }
 
                     const petsContainer = document.getElementById('pets-list');
