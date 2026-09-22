@@ -12,7 +12,6 @@
             --bg: #0a1410;
             --bg-glow: rgba(126, 211, 89, 0.06);
             --panel: rgba(18, 32, 24, 0.65);
-            --panel-solid: #101d16;
             --line: rgba(232, 179, 78, 0.18);
             --line-soft: rgba(240, 236, 226, 0.06);
             --gold: #e8b34e;
@@ -21,9 +20,6 @@
             --text-dim: #93a397;
             --mono: 'IBM Plex Mono', monospace;
             --serif: 'Fraunces', serif;
-
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,17 +27,14 @@
         body {
             font-family: var(--mono);
             background-color: var(--bg);
-            background-image:
-                radial-gradient(circle at 15% 0%, var(--bg-glow) 0%, transparent 55%),
-                radial-gradient(circle at 85% 100%, rgba(232, 179, 78, 0.05) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 15% 0%, var(--bg-glow) 0%, transparent 55%);
             color: var(--text);
-            min-height: 100%;
+            min-height: 100vh;
             padding: 32px 20px 48px;
         }
 
         .container { max-width: 1180px; margin: 0 auto; }
 
-        /* ── Header ─────────────────────────── */
         header {
             display: flex;
             justify-content: space-between;
@@ -59,24 +52,20 @@
             gap: 14px;
         }
 
-        .brand-mark .glyph {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            background: linear-gradient(155deg, rgba(232,179,78,0.18), rgba(126,216,89,0.10));
-            border: 1px solid var(--line);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold);
-            font-size: 17px;
+        /* รูปโปรไฟล์ Roblox บนหัวเว็บ */
+        .brand-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            object-fit: cover;
+            background: #111;
         }
 
         h1 {
             font-family: var(--serif);
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 600;
-            letter-spacing: 0.2px;
             line-height: 1.1;
         }
 
@@ -95,7 +84,6 @@
             align-items: center;
             gap: 9px;
             font-size: 12px;
-            letter-spacing: 0.5px;
             color: var(--leaf);
             padding: 8px 16px;
             border-radius: 999px;
@@ -104,13 +92,11 @@
         }
 
         .pulse {
-            width: 7px;
-            height: 7px;
+            width: 7px; height: 7px;
             background-color: var(--leaf);
             border-radius: 50%;
             box-shadow: 0 0 7px var(--leaf);
             animation: pulse 1.6s infinite ease-in-out;
-            flex-shrink: 0;
         }
 
         @keyframes pulse {
@@ -118,7 +104,6 @@
             50% { transform: scale(1.25); opacity: 1; }
         }
 
-        /* ── Stats ──────────────────────────── */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -131,7 +116,6 @@
             border: 1px solid var(--line-soft);
             border-radius: 10px;
             padding: 18px 20px;
-            backdrop-filter: blur(8px);
             position: relative;
         }
 
@@ -154,16 +138,14 @@
             gap: 7px;
         }
 
-        .stat-title i { color: var(--gold); font-size: 12px; opacity: 0.85; }
+        .stat-title i { color: var(--gold); }
 
         .stat-value {
             font-size: 24px;
             font-weight: 600;
             color: var(--text);
-            letter-spacing: 0.3px;
         }
 
-        /* ── Content sections ───────────────── */
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -172,7 +154,6 @@
 
         @media (max-width: 860px) {
             .content-grid { grid-template-columns: 1fr; }
-            header { align-items: flex-start; }
         }
 
         .section-box {
@@ -180,7 +161,6 @@
             border: 1px solid var(--line-soft);
             border-radius: 10px;
             padding: 20px;
-            backdrop-filter: blur(8px);
             min-height: 380px;
             max-height: 580px;
             display: flex;
@@ -195,24 +175,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
             color: var(--text);
             border-bottom: 1px solid var(--line-soft);
             padding-bottom: 12px;
         }
 
-        .section-title .label {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-        }
-
-        .section-title i { color: var(--gold); font-size: 14px; }
-
         .section-title .count {
             font-family: var(--mono);
             font-size: 12px;
-            font-weight: 500;
             color: var(--bg);
             background: var(--gold);
             padding: 2px 9px;
@@ -225,12 +195,6 @@
             padding-right: 4px;
         }
 
-        .list-container::-webkit-scrollbar { width: 4px; }
-        .list-container::-webkit-scrollbar-thumb {
-            background: rgba(232, 179, 78, 0.25);
-            border-radius: 4px;
-        }
-
         .item-row {
             background: rgba(240, 236, 226, 0.02);
             border: 1px solid var(--line-soft);
@@ -239,16 +203,6 @@
             border-radius: 6px;
             margin-bottom: 8px;
             font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: border-color 0.15s ease, background 0.15s ease;
-        }
-
-        .item-row:hover {
-            border-color: rgba(232, 179, 78, 0.5);
-            border-left-color: var(--leaf);
-            background: rgba(232, 179, 78, 0.05);
         }
 
         .empty-msg {
@@ -256,10 +210,7 @@
             text-align: center;
             margin-top: 60px;
             font-size: 13px;
-            letter-spacing: 0.3px;
         }
-
-        .empty-msg i { display: block; font-size: 20px; margin-bottom: 10px; color: var(--line); }
     </style>
 </head>
 <body>
@@ -267,8 +218,12 @@
     <div class="container">
         <header>
             <div class="brand-mark">
-                <div class="glyph"><i class="fa-solid fa-seedling"></i></div>
-                <h1>OMEGA PREDICTOR<small>LIVE FARM DASHBOARD</small></h1>
+                <!-- รูปโปรไฟล์ Roblox จะแสดงตรงนี้อัตโนมัติ -->
+                <img id="player-avatar" class="brand-avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=150&height=150&format=png" alt="Avatar">
+                <div>
+                    <h1 id="player-display">LOADING...</h1>
+                    <small id="player-username">@WAITING</small>
+                </div>
             </div>
             <div class="status-badge">
                 <div class="pulse"></div>
@@ -277,10 +232,6 @@
         </header>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title"><i class="fa-solid fa-user"></i>Player</div>
-                <div class="stat-value" id="player-name">Loading...</div>
-            </div>
             <div class="stat-card">
                 <div class="stat-title"><i class="fa-solid fa-coins"></i>เงินสด (Money)</div>
                 <div class="stat-value" id="stat-money">$0</div>
@@ -298,39 +249,28 @@
         <div class="content-grid">
             <div class="section-box">
                 <div class="section-title">
-                    <span class="label"><i class="fa-solid fa-paw"></i>สัตว์ทำเงินในฟาร์ม</span>
+                    <span><i class="fa-solid fa-paw" style="color:var(--gold); margin-right:8px;"></i>สัตว์ทำเงินในฟาร์ม</span>
                     <span class="count" id="pet-count">0</span>
                 </div>
                 <div class="list-container" id="pets-list">
-                    <div class="empty-msg"><i class="fa-solid fa-satellite-dish"></i>รอข้อมูลจากตัวเกม...</div>
+                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
                 </div>
             </div>
 
             <div class="section-box">
                 <div class="section-title">
-                    <span class="label"><i class="fa-solid fa-egg"></i>ไอเทม / ไข่ในกระเป๋า</span>
+                    <span><i class="fa-solid fa-egg" style="color:var(--gold); margin-right:8px;"></i>ไอเทม / ไข่ในกระเป๋า</span>
                     <span class="count" id="pred-count">0</span>
                 </div>
                 <div class="list-container" id="predictions-list">
-                    <div class="empty-msg"><i class="fa-solid fa-satellite-dish"></i>รอข้อมูลจากตัวเกม...</div>
+                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 👉 ระบุ URL ของ Render Backend ให้ถูกต้อง
         const API_BASE = "https://webstat-6equ.onrender.com";
-
-        function formatCompact(num) {
-            const n = Number(num);
-            if (isNaN(n)) return num;
-            const abs = Math.abs(n);
-            if (abs >= 1e9) return (n / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
-            if (abs >= 1e6) return (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
-            if (abs >= 1e3) return (n / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
-            return n.toString();
-        }
 
         async function fetchDashboardData() {
             try {
@@ -338,11 +278,15 @@
                 const data = await response.json();
 
                 if (data) {
-                    // แก้ไขชื่อคีย์ให้ตรงกับ Backend (playerName)
-                    document.getElementById('player-name').innerText = data.playerName || "Unknown";
+                    document.getElementById('player-display').innerText = data.displayName || "Unknown";
+                    document.getElementById('player-username').innerText = "@" + (data.playerName || "unknown");
                     document.getElementById('stat-money').innerText = data.money || "$0";
-                    document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
+                    document.getElementById('stat-speed').innerText = data.speed || 0;
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
+
+                    if (data.userId && data.userId > 0) {
+                        document.getElementById('player-avatar').src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=150&height=150&format=png`;
+                    }
 
                     const petsContainer = document.getElementById('pets-list');
                     const petsCount = document.getElementById('pet-count');
@@ -352,28 +296,12 @@
                         data.pets.forEach(pet => {
                             const div = document.createElement('div');
                             div.className = 'item-row';
-                            div.innerHTML = `<span>${pet}</span>`;
+                            div.innerText = pet;
                             petsContainer.appendChild(div);
                         });
                     } else {
                         petsCount.innerText = 0;
-                        petsContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-paw"></i>ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
-                    }
-
-                    const predContainer = document.getElementById('predictions-list');
-                    const predCount = document.getElementById('pred-count');
-                    predContainer.innerHTML = '';
-                    if (data.predictions && data.predictions.length > 0) {
-                        predCount.innerText = data.predictions.length;
-                        data.predictions.forEach(item => {
-                            const div = document.createElement('div');
-                            div.className = 'item-row';
-                            div.innerHTML = `<span>${item}</span>`;
-                            predContainer.appendChild(div);
-                        });
-                    } else {
-                        predCount.innerText = 0;
-                        predContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-egg"></i>ไม่พบข้อมูลไข่หรือไอเทม</div>';
+                        petsContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
                     }
 
                     document.getElementById('connection-status').innerText = "LIVE SYNCED";
