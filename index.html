@@ -319,6 +319,9 @@
     </div>
 
     <script>
+        // 👉 ระบุ URL ของ Render Backend ให้ถูกต้อง
+        const API_BASE = "https://webstat-6equ.onrender.com";
+
         function formatCompact(num) {
             const n = Number(num);
             if (isNaN(n)) return num;
@@ -331,11 +334,12 @@
 
         async function fetchDashboardData() {
             try {
-                const response = await fetch('/api/data'); // เปลี่ยนเป็น endpoint ที่ดึง JSON ล่าสุด
+                const response = await fetch(API_BASE + '/api/data');
                 const data = await response.json();
 
                 if (data) {
-                    document.getElementById('player-name').innerText = data.player || "Unknown";
+                    // แก้ไขชื่อคีย์ให้ตรงกับ Backend (playerName)
+                    document.getElementById('player-name').innerText = data.playerName || "Unknown";
                     document.getElementById('stat-money').innerText = data.money || "$0";
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
