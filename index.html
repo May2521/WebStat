@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="referrer" content="no-referrer">
     
     <title>Omega Predictor // Live Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -221,7 +220,6 @@
     <div class="container">
         <header>
             <div class="brand-mark">
-                <!-- เปลี่ยนรูปเริ่มต้นเป็นโลโก้รอโหลด -->
                 <img id="player-avatar" class="brand-avatar" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Roblox_Logo_2022.jpg" alt="Avatar">
                 <div>
                     <h1 id="player-display">LOADING...</h1>
@@ -274,7 +272,6 @@
 
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
-        let lastUserId = null;
 
         function formatCompact(num) {
             const n = Number(num);
@@ -298,21 +295,15 @@
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    // --- ระบบดึงรูปร่างผ่าน Proxy ทะลุการบล็อกของเบราว์เซอร์ 100% ---
-                    if (data.userId && data.userId > 0 && data.userId !== lastUserId) {
-                        lastUserId = data.userId;
+                    // --- ระบบดึงรูปภาพออโต้ ผ่าน Image Proxy บล็อกไม่ได้แน่นอน 100% ---
+                    if (data.userId && data.userId > 0) {
+                        const targetUserId = data.userId;
+                        const avatarImg = document.getElementById('player-avatar');
                         
-                        // เปลี่ยนจาก roblox.com เป็น roproxy.com เพื่อหลบ CORS
-                        fetch(`https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds=${data.userId}&size=420x420&format=Png&isCircular=false`)
-                            .then(res => res.json())
-                            .then(rbxData => {
-                                if (rbxData && rbxData.data && rbxData.data.length > 0) {
-                                    document.getElementById('player-avatar').src = rbxData.data[0].imageUrl;
-                                }
-                            })
-                            .catch(err => console.error("โหลดรูปผ่าน Proxy ไม่สำเร็จ:", err));
+                        // ใช้ wsrv.nl ช่วยดึงรูปข้ามเซิร์ฟเวอร์แบบทะลุบล็อก
+                        const rawRbxUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${targetUserId}&width=420&height=420&format=png`;
+                        avatarImg.src = `https://wsrv.nl/?url=${encodeURIComponent(rawRbxUrl)}`;
                     }
-                    // ---------------------------------------------
 
                     const petsContainer = document.getElementById('pets-list');
                     const petsCount = document.getElementById('pet-count');
