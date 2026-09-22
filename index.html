@@ -49,17 +49,19 @@
         .brand-mark {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
         }
 
-        /* รูปโปรไฟล์ Roblox บนหัวเว็บ */
+        /* 🖼️ ปรับขนาดรูปโปรไฟล์ให้ใหญ่ขึ้น (72px) และป้องกันภาพพัง */
         .brand-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
             border: 2px solid var(--gold);
             object-fit: cover;
             background: #111;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
         h1 {
@@ -218,7 +220,7 @@
     <div class="container">
         <header>
             <div class="brand-mark">
-                <!-- รูปโปรไฟล์ Roblox จะแสดงตรงนี้อัตโนมัติ -->
+                <!-- รูปโปรไฟล์ Roblox ขยายใหญ่ขึ้นสวยงาม -->
                 <img id="player-avatar" class="brand-avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=150&height=150&format=png" alt="Avatar">
                 <div>
                     <h1 id="player-display">LOADING...</h1>
@@ -272,6 +274,17 @@
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
 
+        // ฟังก์ชันย่อตัวเลขความเร็วให้เป็น B, M, K
+        function formatCompact(num) {
+            const n = Number(num);
+            if (isNaN(n)) return num;
+            const abs = Math.abs(n);
+            if (abs >= 1e9) return (n / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
+            if (abs >= 1e6) return (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
+            if (abs >= 1e3) return (n / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
+            return n.toString();
+        }
+
         async function fetchDashboardData() {
             try {
                 const response = await fetch(API_BASE + '/api/data');
@@ -281,11 +294,14 @@
                     document.getElementById('player-display').innerText = data.displayName || "Unknown";
                     document.getElementById('player-username').innerText = "@" + (data.playerName || "unknown");
                     document.getElementById('stat-money').innerText = data.money || "$0";
-                    document.getElementById('stat-speed').innerText = data.speed || 0;
+                    
+                    // เรียกใช้ formatCompact กับความเร็ว
+                    document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
+                    // แก้ไขลิงก์รูปโปรไฟล์ Roblox ให้ดึงถูกต้องและไม่พัง
                     if (data.userId && data.userId > 0) {
-                        document.getElementById('player-avatar').src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=150&height=150&format=png`;
+                        document.getElementById('player-avatar').src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
                     }
 
                     const petsContainer = document.getElementById('pets-list');
