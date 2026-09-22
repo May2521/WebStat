@@ -3,135 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Omega Dashboard - Steal an Egg</title>
+    <title>Omega Predictor // Live Dashboard</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body {
-            background-color: #0f1116;
-            color: #f0f0f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 170, 0, 0.3);
+            --accent-orange: #ffaa00;
+            --accent-green: #00ff66;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 10%, rgba(255, 170, 0, 0.05) 0%, transparent 60%);
+            color: var(--text-main);
+            min-height: 100vh;
             padding: 20px;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background-color: #1a1c23;
-            border: 1px solid #ffaa00;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
         }
-        h1 {
-            color: #ffaa00;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-            font-size: 22px;
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
         }
-        .stat-grid {
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            background: rgba(0, 255, 102, 0.1);
+            color: var(--accent-green);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 102, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .stat-box {
-            background-color: #252830;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #ffaa00;
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
-        .stat-box h3 { margin: 0 0 5px 0; color: #aaa; font-size: 13px; }
-        .stat-box p { margin: 0; font-size: 18px; font-weight: bold; color: #fff; }
-        
-        .list-section {
-            background-color: #252830;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent-orange);
         }
-        .list-section h2 { color: #ff5566; margin-top: 0; font-size: 16px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
-        pre {
-            background-color: #111;
-            padding: 12px;
-            border-radius: 4px;
-            overflow-x: auto;
-            color: #00ffaa;
-            white-space: pre-wrap;
-            font-size: 12px;
-            line-height: 1.4;
+
+        .stat-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
-        .timestamp {
-            text-align: right;
-            font-size: 11px;
-            color: #888;
-            margin-top: 15px;
+
+        .stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: #fff;
+        }
+
+        /* Content Sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            min-height: 400px;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-orange);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 10px;
+        }
+
+        .list-container {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 5px;
+        }
+
+        .list-container::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 170, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .item-row {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .item-row:hover {
+            border-color: var(--accent-orange);
+            background: rgba(255, 170, 0, 0.05);
+        }
+
+        .empty-msg {
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 50px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1 id="playerName">📊 กำลังเชื่อมต่อข้อมูล...</h1>
-    
-    <div class="stat-grid">
-        <div class="stat-box">
-            <h3>💰 เงินปัจจุบัน</h3>
-            <p id="moneyValue">---</p>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <h1><i class="fa-solid fa-shield-cat"></i> OMEGA PREDICTOR <span style="font-size: 12px; color: var(--text-muted);">DASHBOARD</span></h1>
+            </div>
+            <div class="status-badge">
+                <div class="pulse"></div>
+                <span id="connection-status">CONNECTED</span>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-user"></i> Player</div>
+                <div class="stat-value" id="player-name">Loading...</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-wallet"></i> เงินสด (Money)</div>
+                <div class="stat-value" id="stat-money">$0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-bolt"></i> ความเร็ว (Speed)</div>
+                <div class="stat-value" id="stat-speed">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title"><i class="fa-solid fa-dna"></i> Scramble</div>
+                <div class="stat-value" id="stat-scramble">0</div>
+            </div>
         </div>
-        <div class="stat-box">
-            <h3>⚡ ความเร็ว (Speed)</h3>
-            <p id="speedValue">---</p>
-        </div>
-        <div class="stat-box">
-            <h3>🧬 Scramble</h3>
-            <p id="scrambleValue">---</p>
+
+        <!-- Main Lists -->
+        <div class="content-grid">
+            <!-- Pets Box -->
+            <div class="section-box">
+                <div class="section-title">
+                    <i class="fa-solid fa-paw"></i> สัตว์ทำเงินในฟาร์ม (<span id="pet-count">0</span>)
+                </div>
+                <div class="list-container" id="pets-list">
+                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
+                </div>
+            </div>
+
+            <!-- Predictions / Inventory Box -->
+            <div class="section-box">
+                <div class="section-title">
+                    <i class="fa-solid fa-egg"></i> ไอเทม / ไข่ในกระเป๋า (<span id="pred-count">0</span>)
+                </div>
+                <div class="list-container" id="predictions-list">
+                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="list-section">
-        <h2>🔮 EGG PREDICTOR (ผลทำนายไข่ในกระเป๋า)</h2>
-        <pre id="predictionsList">รอรับข้อมูลจากเกม...</pre>
-    </div>
+    <!-- JavaScript สำหรับดึงข้อมูลจาก Server มารender หน้าจอ -->
+    <script>
+        async function fetchDashboardData() {
+            try {
+                // สมมติว่าฝั่ง Backend ของคุณมี Endpoint GET สำหรับดึงข้อมูลล่าสุดที่พุชเข้ามา
+                // หรือปรับเปลี่ยน URL ตามโครงสร้าง Server Render ของคุณ
+                const response = await fetch('/api/data'); // เปลี่ยนเป็น endpoint ที่ดึง JSON ล่าสุด
+                const data = await response.json();
 
-    <div class="list-section">
-        <h2>🐾 สัตว์ในฟาร์ม</h2>
-        <pre id="petsList">รอรับข้อมูลจากเกม...</pre>
-    </div>
+                if (data) {
+                    document.getElementById('player-name').innerText = data.player || "Unknown";
+                    document.getElementById('stat-money').innerText = data.money || "$0";
+                    document.getElementById('stat-speed').innerText = data.speed || 0;
+                    document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-    <div class="timestamp" id="lastUpdate">อัปเดตล่าสุด: ---</div>
-</div>
+                    // Render Pets
+                    const petsContainer = document.getElementById('pets-list');
+                    const petsCount = document.getElementById('pet-count');
+                    petsContainer.innerHTML = '';
+                    if (data.pets && data.pets.length > 0) {
+                        petsCount.innerText = data.pets.length;
+                        data.pets.forEach(pet => {
+                            const div = document.createElement('div');
+                            div.className = 'item-row';
+                            div.innerHTML = `<span>${pet}</span>`;
+                            petsContainer.appendChild(div);
+                        });
+                    } else {
+                        petsCount.innerText = 0;
+                        petsContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
+                    }
 
-<script>
-    // 🔗 ลิงก์ API จาก Render ของคุณ
-    const API_URL = "https://webstat-6equ.onrender.com/api/data";
+                    // Render Predictions / Eggs
+                    const predContainer = document.getElementById('predictions-list');
+                    const predCount = document.getElementById('pred-count');
+                    predContainer.innerHTML = '';
+                    if (data.predictions && data.predictions.length > 0) {
+                        predCount.innerText = data.predictions.length;
+                        data.predictions.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'item-row';
+                            div.innerHTML = `<span>${item}</span>`;
+                            predContainer.appendChild(div);
+                        });
+                    } else {
+                        predCount.innerText = 0;
+                        predContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลไข่หรือไอเทม</div>';
+                    }
 
-    async function fetchGameData() {
-        try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-
-            if (data.playerName && data.playerName !== "Waiting...") {
-                document.getElementById('playerName').innerText = "📊 " + data.playerName + " - Live Dashboard";
-                document.getElementById('moneyValue').innerText = data.money;
-                document.getElementById('speedValue').innerText = data.speed;
-                document.getElementById('scrambleValue').innerText = data.scramble;
-                
-                document.getElementById('predictionsList').innerText = data.predictions.length > 0 ? data.predictions.join('\n') : "ไม่มีไข่ในกระเป๋า";
-                document.getElementById('petsList').innerText = data.pets.length > 0 ? data.pets.join('\n') : "ไม่มีสัตว์ในฟาร์ม";
-                
-                const date = new Date(data.lastUpdate);
-                document.getElementById('lastUpdate').innerText = "อัปเดตล่าสุด: " + date.toLocaleTimeString();
+                    document.getElementById('connection-status').innerText = "LIVE SYNCED";
+                }
+            } catch (error) {
+                document.getElementById('connection-status').innerText = "WAITING DATA...";
             }
-        } catch (error) {
-            console.error("Error fetching data:", error);
-            document.getElementById('playerName').innerText = "❌ ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้";
         }
-    }
 
-    fetchGameData();
-    // รีเฟรชหน้าเว็บอัตโนมัติทุกๆ 3 วินาที
-    setInterval(fetchGameData, 3000);
-</script>
-
+        // ดึงข้อมูลอัปเดตทุกๆ 2 วินาที
+        setInterval(fetchDashboardData, 2000);
+        fetchDashboardData();
+    </script>
 </body>
 </html>
