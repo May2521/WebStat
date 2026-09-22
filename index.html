@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    
-    <!-- โค้ดปลดล็อกการดึงรูปจาก Roblox (แก้ปัญหารูปโปรไฟล์สีดำ) -->
     <meta name="referrer" content="no-referrer">
     
     <title>Omega Predictor // Live Dashboard</title>
@@ -223,7 +221,8 @@
     <div class="container">
         <header>
             <div class="brand-mark">
-                <img id="player-avatar" class="brand-avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=150&height=150&format=png" alt="Avatar">
+                <!-- เปลี่ยนรูปเริ่มต้นเป็นโลโก้รอโหลด -->
+                <img id="player-avatar" class="brand-avatar" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Roblox_Logo_2022.jpg" alt="Avatar">
                 <div>
                     <h1 id="player-display">LOADING...</h1>
                     <small id="player-username">@WAITING</small>
@@ -275,6 +274,7 @@
 
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
+        let lastUserId = null; // ตัวแปรเช็คว่าโหลดรูปไปแล้วหรือยัง
 
         function formatCompact(num) {
             const n = Number(num);
@@ -298,12 +298,21 @@
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    const avatarImg = document.getElementById('player-avatar');
-                    if (data.avatarUrl) {
-                        avatarImg.src = data.avatarUrl;
-                    } else if (data.userId && data.userId > 0) {
-                        avatarImg.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
+                    // --- ระบบดึงรูปภาพแบบใหม่ ทะลุบล็อก Roblox 100% ---
+                    if (data.userId && data.userId > 0 && data.userId !== lastUserId) {
+                        lastUserId = data.userId; // จำไว้ว่าโหลดไอดีนี้ไปแล้ว จะได้ไม่โหลดซ้ำรัวๆ
+                        
+                        // ใช้ API ดึง JSON ของรูปร่างจริง (CDN) 
+                        fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${data.userId}&size=420x420&format=Png&isCircular=false`)
+                            .then(res => res.json())
+                            .then(rbxData => {
+                                if (rbxData && rbxData.data && rbxData.data.length > 0) {
+                                    document.getElementById('player-avatar').src = rbxData.data[0].imageUrl;
+                                }
+                            })
+                            .catch(err => console.error("โหลดรูปไม่สำเร็จ:", err));
                     }
+                    // ---------------------------------------------
 
                     const petsContainer = document.getElementById('pets-list');
                     const petsCount = document.getElementById('pet-count');
