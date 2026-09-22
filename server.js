@@ -10,6 +10,7 @@ let gameDataStore = {
     playerName: "Waiting...",
     displayName: "Waiting...",
     userId: 0,
+    avatarUrl: "",
     money: "$0",
     speed: 0,
     scramble: "0",
@@ -19,15 +20,18 @@ let gameDataStore = {
 
 app.post('/api/sync', (req, res) => {
     const data = req.body;
-    if (!data || !data.playerName) {
+    const pName = data.playerName || data.player;
+    
+    if (!data || !pName) {
         return res.status(400).json({ success: false, message: "Invalid Data" });
     }
 
     gameDataStore = {
         lastUpdate: new Date().toISOString(),
-        playerName: data.playerName,
-        displayName: data.displayName || data.playerName,
+        playerName: pName,
+        displayName: data.displayName || pName,
         userId: data.userId || 0,
+        avatarUrl: data.avatarUrl || "",
         money: data.money || "$0",
         speed: data.speed || 0,
         scramble: data.scramble || "0",
@@ -35,7 +39,7 @@ app.post('/api/sync', (req, res) => {
         predictions: data.predictions || []
     };
 
-    console.log(`[SYNC SUCCESS] ${data.displayName} (@${data.playerName})`);
+    console.log(`[SYNC SUCCESS] ${gameDataStore.displayName} (@${gameDataStore.playerName})`);
     res.status(200).json({ success: true });
 });
 
