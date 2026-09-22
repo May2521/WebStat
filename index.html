@@ -2,216 +2,273 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Omega Predictor // Live Dashboard</title>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(17, 24, 39, 0.7);
-            --border-color: rgba(255, 170, 0, 0.3);
-            --accent-orange: #ffaa00;
-            --accent-green: #00ff66;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --bg: #0a1410;
+            --bg-glow: rgba(126, 211, 89, 0.06);
+            --panel: rgba(18, 32, 24, 0.65);
+            --panel-solid: #101d16;
+            --line: rgba(232, 179, 78, 0.18);
+            --line-soft: rgba(240, 236, 226, 0.06);
+            --gold: #e8b34e;
+            --leaf: #7ed859;
+            --text: #f0ece2;
+            --text-dim: #93a397;
+            --mono: 'IBM Plex Mono', monospace;
+            --serif: 'Fraunces', serif;
+
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Prompt', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at 50% 10%, rgba(255, 170, 0, 0.05) 0%, transparent 60%);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: var(--mono);
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 15% 0%, var(--bg-glow) 0%, transparent 55%),
+                radial-gradient(circle at 85% 100%, rgba(232, 179, 78, 0.05) 0%, transparent 50%);
+            color: var(--text);
+            min-height: 100%;
+            padding: 32px 20px 48px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1180px; margin: 0 auto; }
 
+        /* ── Header ─────────────────────────── */
         header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
+            align-items: flex-end;
+            gap: 20px;
+            margin-bottom: 36px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--line);
+            flex-wrap: wrap;
         }
 
-        .logo h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent-orange);
+        .brand-mark {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
+        }
+
+        .brand-mark .glyph {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(155deg, rgba(232,179,78,0.18), rgba(126,216,89,0.10));
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 17px;
+        }
+
+        h1 {
+            font-family: var(--serif);
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            line-height: 1.1;
+        }
+
+        h1 small {
+            display: block;
+            font-family: var(--mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            margin-top: 4px;
         }
 
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            background: rgba(0, 255, 102, 0.1);
-            color: var(--accent-green);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 255, 102, 0.3);
-            font-family: 'JetBrains Mono', monospace;
+            gap: 9px;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: var(--leaf);
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(126, 216, 89, 0.28);
+            background: rgba(126, 216, 89, 0.06);
         }
 
         .pulse {
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-green);
+            width: 7px;
+            height: 7px;
+            background-color: var(--leaf);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-green);
-            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 7px var(--leaf);
+            animation: pulse 1.6s infinite ease-in-out;
+            flex-shrink: 0;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+            0%, 100% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.25); opacity: 1; }
         }
 
-        /* Stats Grid */
+        /* ── Stats ──────────────────────────── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+            margin-bottom: 26px;
         }
 
         .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            background: var(--panel);
+            border: 1px solid var(--line-soft);
+            border-radius: 10px;
+            padding: 18px 20px;
+            backdrop-filter: blur(8px);
             position: relative;
-            overflow: hidden;
         }
 
-        .stat-card::before {
+        .stat-card::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent-orange);
+            left: 20px; right: 20px; bottom: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold), transparent 70%);
+            opacity: 0.6;
         }
 
         .stat-title {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
         }
+
+        .stat-title i { color: var(--gold); font-size: 12px; opacity: 0.85; }
 
         .stat-value {
-            font-size: 26px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.3px;
         }
 
-        /* Content Sections */
+        /* ── Content sections ───────────────── */
         .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
         }
 
-        @media (max-width: 900px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 860px) {
+            .content-grid { grid-template-columns: 1fr; }
+            header { align-items: flex-start; }
         }
 
         .section-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: var(--panel);
+            border: 1px solid var(--line-soft);
+            border-radius: 10px;
             padding: 20px;
-            backdrop-filter: blur(10px);
-            min-height: 400px;
-            max-height: 600px;
+            backdrop-filter: blur(8px);
+            min-height: 380px;
+            max-height: 580px;
             display: flex;
             flex-direction: column;
         }
 
         .section-title {
+            font-family: var(--serif);
             font-size: 16px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
-            color: var(--accent-orange);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 10px;
+            color: var(--text);
+            border-bottom: 1px solid var(--line-soft);
+            padding-bottom: 12px;
+        }
+
+        .section-title .label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .section-title i { color: var(--gold); font-size: 14px; }
+
+        .section-title .count {
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--bg);
+            background: var(--gold);
+            padding: 2px 9px;
+            border-radius: 999px;
         }
 
         .list-container {
             overflow-y: auto;
             flex-grow: 1;
-            padding-right: 5px;
+            padding-right: 4px;
         }
 
-        .list-container::-webkit-scrollbar {
-            width: 5px;
-        }
-
+        .list-container::-webkit-scrollbar { width: 4px; }
         .list-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 170, 0, 0.3);
-            border-radius: 5px;
+            background: rgba(232, 179, 78, 0.25);
+            border-radius: 4px;
         }
 
         .item-row {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-family: 'JetBrains Mono', monospace;
+            background: rgba(240, 236, 226, 0.02);
+            border: 1px solid var(--line-soft);
+            border-left: 2px solid var(--gold);
+            padding: 11px 14px;
+            border-radius: 6px;
+            margin-bottom: 8px;
             font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s ease;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
 
         .item-row:hover {
-            border-color: var(--accent-orange);
-            background: rgba(255, 170, 0, 0.05);
+            border-color: rgba(232, 179, 78, 0.5);
+            border-left-color: var(--leaf);
+            background: rgba(232, 179, 78, 0.05);
         }
 
         .empty-msg {
-            color: var(--text-muted);
+            color: var(--text-dim);
             text-align: center;
-            margin-top: 50px;
-            font-style: italic;
+            margin-top: 60px;
+            font-size: 13px;
+            letter-spacing: 0.3px;
         }
+
+        .empty-msg i { display: block; font-size: 20px; margin-bottom: 10px; color: var(--line); }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Header -->
         <header>
-            <div class="logo">
-                <h1><i class="fa-solid fa-shield-cat"></i> OMEGA PREDICTOR <span style="font-size: 12px; color: var(--text-muted);">DASHBOARD</span></h1>
+            <div class="brand-mark">
+                <div class="glyph"><i class="fa-solid fa-seedling"></i></div>
+                <h1>OMEGA PREDICTOR<small>LIVE FARM DASHBOARD</small></h1>
             </div>
             <div class="status-badge">
                 <div class="pulse"></div>
@@ -219,66 +276,70 @@
             </div>
         </header>
 
-        <!-- Stats Overview -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-title"><i class="fa-solid fa-user"></i> Player</div>
+                <div class="stat-title"><i class="fa-solid fa-user"></i>Player</div>
                 <div class="stat-value" id="player-name">Loading...</div>
             </div>
             <div class="stat-card">
-                <div class="stat-title"><i class="fa-solid fa-wallet"></i> เงินสด (Money)</div>
+                <div class="stat-title"><i class="fa-solid fa-coins"></i>เงินสด (Money)</div>
                 <div class="stat-value" id="stat-money">$0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-title"><i class="fa-solid fa-bolt"></i> ความเร็ว (Speed)</div>
+                <div class="stat-title"><i class="fa-solid fa-gauge-high"></i>ความเร็ว (Speed)</div>
                 <div class="stat-value" id="stat-speed">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-title"><i class="fa-solid fa-dna"></i> Scramble</div>
+                <div class="stat-title"><i class="fa-solid fa-dna"></i>Scramble</div>
                 <div class="stat-value" id="stat-scramble">0</div>
             </div>
         </div>
 
-        <!-- Main Lists -->
         <div class="content-grid">
-            <!-- Pets Box -->
             <div class="section-box">
                 <div class="section-title">
-                    <i class="fa-solid fa-paw"></i> สัตว์ทำเงินในฟาร์ม (<span id="pet-count">0</span>)
+                    <span class="label"><i class="fa-solid fa-paw"></i>สัตว์ทำเงินในฟาร์ม</span>
+                    <span class="count" id="pet-count">0</span>
                 </div>
                 <div class="list-container" id="pets-list">
-                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
+                    <div class="empty-msg"><i class="fa-solid fa-satellite-dish"></i>รอข้อมูลจากตัวเกม...</div>
                 </div>
             </div>
 
-            <!-- Predictions / Inventory Box -->
             <div class="section-box">
                 <div class="section-title">
-                    <i class="fa-solid fa-egg"></i> ไอเทม / ไข่ในกระเป๋า (<span id="pred-count">0</span>)
+                    <span class="label"><i class="fa-solid fa-egg"></i>ไอเทม / ไข่ในกระเป๋า</span>
+                    <span class="count" id="pred-count">0</span>
                 </div>
                 <div class="list-container" id="predictions-list">
-                    <div class="empty-msg">รอข้อมูลจากตัวเกม...</div>
+                    <div class="empty-msg"><i class="fa-solid fa-satellite-dish"></i>รอข้อมูลจากตัวเกม...</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript สำหรับดึงข้อมูลจาก Server มารender หน้าจอ -->
     <script>
+        function formatCompact(num) {
+            const n = Number(num);
+            if (isNaN(n)) return num;
+            const abs = Math.abs(n);
+            if (abs >= 1e9) return (n / 1e9).toFixed(2).replace(/\.00$/, '') + 'B';
+            if (abs >= 1e6) return (n / 1e6).toFixed(2).replace(/\.00$/, '') + 'M';
+            if (abs >= 1e3) return (n / 1e3).toFixed(2).replace(/\.00$/, '') + 'K';
+            return n.toString();
+        }
+
         async function fetchDashboardData() {
             try {
-                // สมมติว่าฝั่ง Backend ของคุณมี Endpoint GET สำหรับดึงข้อมูลล่าสุดที่พุชเข้ามา
-                // หรือปรับเปลี่ยน URL ตามโครงสร้าง Server Render ของคุณ
                 const response = await fetch('/api/data'); // เปลี่ยนเป็น endpoint ที่ดึง JSON ล่าสุด
                 const data = await response.json();
 
                 if (data) {
                     document.getElementById('player-name').innerText = data.player || "Unknown";
                     document.getElementById('stat-money').innerText = data.money || "$0";
-                    document.getElementById('stat-speed').innerText = data.speed || 0;
+                    document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    // Render Pets
                     const petsContainer = document.getElementById('pets-list');
                     const petsCount = document.getElementById('pet-count');
                     petsContainer.innerHTML = '';
@@ -292,10 +353,9 @@
                         });
                     } else {
                         petsCount.innerText = 0;
-                        petsContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
+                        petsContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-paw"></i>ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
                     }
 
-                    // Render Predictions / Eggs
                     const predContainer = document.getElementById('predictions-list');
                     const predCount = document.getElementById('pred-count');
                     predContainer.innerHTML = '';
@@ -309,7 +369,7 @@
                         });
                     } else {
                         predCount.innerText = 0;
-                        predContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลไข่หรือไอเทม</div>';
+                        predContainer.innerHTML = '<div class="empty-msg"><i class="fa-solid fa-egg"></i>ไม่พบข้อมูลไข่หรือไอเทม</div>';
                     }
 
                     document.getElementById('connection-status').innerText = "LIVE SYNCED";
@@ -319,7 +379,6 @@
             }
         }
 
-        // ดึงข้อมูลอัปเดตทุกๆ 2 วินาที
         setInterval(fetchDashboardData, 2000);
         fetchDashboardData();
     </script>
