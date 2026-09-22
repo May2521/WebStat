@@ -52,7 +52,6 @@
             gap: 16px;
         }
 
-        /* 🖼️ ปรับขนาดรูปโปรไฟล์ให้ใหญ่ขึ้น (72px) และป้องกันภาพพัง */
         .brand-avatar {
             width: 72px;
             height: 72px;
@@ -220,7 +219,6 @@
     <div class="container">
         <header>
             <div class="brand-mark">
-                <!-- รูปโปรไฟล์ Roblox ขยายใหญ่ขึ้นสวยงาม -->
                 <img id="player-avatar" class="brand-avatar" src="https://www.roblox.com/headshot-thumbnail/image?userId=1&width=150&height=150&format=png" alt="Avatar">
                 <div>
                     <h1 id="player-display">LOADING...</h1>
@@ -274,7 +272,6 @@
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
 
-        // ฟังก์ชันย่อตัวเลขความเร็วให้เป็น B, M, K
         function formatCompact(num) {
             const n = Number(num);
             if (isNaN(n)) return num;
@@ -294,14 +291,14 @@
                     document.getElementById('player-display').innerText = data.displayName || "Unknown";
                     document.getElementById('player-username').innerText = "@" + (data.playerName || "unknown");
                     document.getElementById('stat-money').innerText = data.money || "$0";
-                    
-                    // เรียกใช้ formatCompact กับความเร็ว
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    // แก้ไขลิงก์รูปโปรไฟล์ Roblox ให้ดึงถูกต้องและไม่พัง
-                    if (data.userId && data.userId > 0) {
-                        document.getElementById('player-avatar').src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
+                    const avatarImg = document.getElementById('player-avatar');
+                    if (data.avatarUrl) {
+                        avatarImg.src = data.avatarUrl;
+                    } else if (data.userId && data.userId > 0) {
+                        avatarImg.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
                     }
 
                     const petsContainer = document.getElementById('pets-list');
@@ -318,6 +315,22 @@
                     } else {
                         petsCount.innerText = 0;
                         petsContainer.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลสัตว์ในฟาร์ม</div>';
+                    }
+
+                    const predsContainer = document.getElementById('predictions-list');
+                    const predsCount = document.getElementById('pred-count');
+                    predsContainer.innerHTML = '';
+                    if (data.predictions && data.predictions.length > 0) {
+                        predsCount.innerText = data.predictions.length;
+                        data.predictions.forEach(pred => {
+                            const div = document.createElement('div');
+                            div.className = 'item-row';
+                            div.innerText = pred;
+                            predsContainer.appendChild(div);
+                        });
+                    } else {
+                        predsCount.innerText = 0;
+                        predsContainer.innerHTML = '<div class="empty-msg">ไม่พบไข่/ไอเทมในกระเป๋า</div>';
                     }
 
                     document.getElementById('connection-status').innerText = "LIVE SYNCED";
