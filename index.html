@@ -272,6 +272,7 @@
 
     <script>
         const API_BASE = "https://webstat-6equ.onrender.com";
+        let lastUserId = null; // ล็อกไอดีไว้กันโหลดรูปซ้ำ
 
         function formatCompact(num) {
             const n = Number(num);
@@ -295,13 +296,12 @@
                     document.getElementById('stat-speed').innerText = formatCompact(data.speed || 0);
                     document.getElementById('stat-scramble').innerText = data.scramble || 0;
 
-                    // --- ระบบดึงรูปภาพออโต้ ผ่าน Image Proxy บล็อกไม่ได้แน่นอน 100% ---
-                    if (data.userId && data.userId > 0) {
-                        const targetUserId = data.userId;
+                    // โหลดรูปเฉพาะตอนที่ UserId มีการเปลี่ยนเปลี่ยนเท่านั้น (กันสแปมสคริปต์ซ้ำ)
+                    if (data.userId && data.userId > 0 && data.userId !== lastUserId) {
+                        lastUserId = data.userId;
                         const avatarImg = document.getElementById('player-avatar');
+                        const rawRbxUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${data.userId}&width=420&height=420&format=png`;
                         
-                        // ใช้ wsrv.nl ช่วยดึงรูปข้ามเซิร์ฟเวอร์แบบทะลุบล็อก
-                        const rawRbxUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${targetUserId}&width=420&height=420&format=png`;
                         avatarImg.src = `https://wsrv.nl/?url=${encodeURIComponent(rawRbxUrl)}`;
                     }
 
