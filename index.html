@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omega Dashboard - Steal an Egg</title>
+    <style>
+        body {
+            background-color: #0f1116;
+            color: #f0f0f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #1a1c23;
+            border: 1px solid #ffaa00;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.2);
+        }
+        h1 {
+            color: #ffaa00;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            font-size: 22px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #252830;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffaa00;
+        }
+        .stat-box h3 { margin: 0 0 5px 0; color: #aaa; font-size: 13px; }
+        .stat-box p { margin: 0; font-size: 18px; font-weight: bold; color: #fff; }
+        
+        .list-section {
+            background-color: #252830;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .list-section h2 { color: #ff5566; margin-top: 0; font-size: 16px; border-bottom: 1px dashed #444; padding-bottom: 5px; }
+        pre {
+            background-color: #111;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            color: #00ffaa;
+            white-space: pre-wrap;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .timestamp {
+            text-align: right;
+            font-size: 11px;
+            color: #888;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="playerName">📊 กำลังเชื่อมต่อข้อมูล...</h1>
+    
+    <div class="stat-grid">
+        <div class="stat-box">
+            <h3>💰 เงินปัจจุบัน</h3>
+            <p id="moneyValue">---</p>
+        </div>
+        <div class="stat-box">
+            <h3>⚡ ความเร็ว (Speed)</h3>
+            <p id="speedValue">---</p>
+        </div>
+        <div class="stat-box">
+            <h3>🧬 Scramble</h3>
+            <p id="scrambleValue">---</p>
+        </div>
+    </div>
+
+    <div class="list-section">
+        <h2>🔮 EGG PREDICTOR (ผลทำนายไข่ในกระเป๋า)</h2>
+        <pre id="predictionsList">รอรับข้อมูลจากเกม...</pre>
+    </div>
+
+    <div class="list-section">
+        <h2>🐾 สัตว์ในฟาร์ม</h2>
+        <pre id="petsList">รอรับข้อมูลจากเกม...</pre>
+    </div>
+
+    <div class="timestamp" id="lastUpdate">อัปเดตล่าสุด: ---</div>
+</div>
+
+<script>
+    // 🔗 ลิงก์ API จาก Render ของคุณ
+    const API_URL = "https://webstat-6equ.onrender.com/api/data";
+
+    async function fetchGameData() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+
+            if (data.playerName && data.playerName !== "Waiting...") {
+                document.getElementById('playerName').innerText = "📊 " + data.playerName + " - Live Dashboard";
+                document.getElementById('moneyValue').innerText = data.money;
+                document.getElementById('speedValue').innerText = data.speed;
+                document.getElementById('scrambleValue').innerText = data.scramble;
+                
+                document.getElementById('predictionsList').innerText = data.predictions.length > 0 ? data.predictions.join('\n') : "ไม่มีไข่ในกระเป๋า";
+                document.getElementById('petsList').innerText = data.pets.length > 0 ? data.pets.join('\n') : "ไม่มีสัตว์ในฟาร์ม";
+                
+                const date = new Date(data.lastUpdate);
+                document.getElementById('lastUpdate').innerText = "อัปเดตล่าสุด: " + date.toLocaleTimeString();
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            document.getElementById('playerName').innerText = "❌ ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้";
+        }
+    }
+
+    fetchGameData();
+    // รีเฟรชหน้าเว็บอัตโนมัติทุกๆ 3 วินาที
+    setInterval(fetchGameData, 3000);
+</script>
+
+</body>
+</html>
